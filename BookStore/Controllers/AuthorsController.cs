@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Entity;
 using System.Linq;
+using System.Linq.Dynamic;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
 using BookStore.Models;
 using BookStore.DAL;
+using System.Web.ModelBinding;
 
 namespace BookStore.Controllers
 {
@@ -20,6 +22,19 @@ namespace BookStore.Controllers
         {
             return View(db.Authors.ToList());
         }
+
+        // GET: Authors
+        public ActionResult Index([Form] QueryOptions queryOptions)
+        {
+            
+            //power by Dynamic Linq Query
+            var authors = db.Authors.OrderBy(queryOptions.Sort);
+
+            
+            ViewBag.QueryOptions = queryOptions;
+            return View(authors.ToList());
+        }
+
 
         // GET: /Authors/Details/5
         public ActionResult Details(int? id)
