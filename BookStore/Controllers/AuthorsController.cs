@@ -17,11 +17,13 @@ namespace BookStore.Controllers
     {
         private BookContext db = new BookContext();
 
+        /*
         // GET: /Authors/
         public ActionResult Index()
         {
             return View(db.Authors.ToList());
         }
+         */
 
         // GET: Authors
         public ActionResult Index([Form] QueryOptions queryOptions)

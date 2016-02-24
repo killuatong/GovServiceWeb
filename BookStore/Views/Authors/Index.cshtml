@@ -1,7 +1,9 @@
 ﻿@model IEnumerable<BookStore.Models.Author>
+@using BookStore.Models;
 
 @{
     ViewBag.Title = "Index";
+    var queryOptions = (QueryOptions)ViewBag.QueryOptions;
 }
 
 <h2>Index</h2>
@@ -48,9 +50,15 @@
 <table class="table table-bordered table-striped">
     <thead>
         <tr>
-            <th>@Html.DisplayNameFor(model => model.FirstName)</th>
-            <th>@Html.DisplayNameFor(model => model.LastName)</th>
-            <th>Actions</th>
+            <th>
+                @Html.BuildSortableLink("First Name", "Index", "FirstName", queryOptions)
+            </th>
+            <th>
+                @Html.BuildSortableLink("Last Name", "Index", "LastName", queryOptions)
+            </th>
+            <th>
+                Actions
+            </th>
         </tr>
     </thead>
     <tbody data-bind="foreach: authors">

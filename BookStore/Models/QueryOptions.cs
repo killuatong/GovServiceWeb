@@ -13,6 +13,8 @@ namespace BookStore.Models
         public SortOrder SortOrder { get; set; }
 
 
+
+
         public QueryOptions()
         {
             SortField = "Id";
