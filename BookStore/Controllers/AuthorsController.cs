@@ -30,9 +30,17 @@ namespace BookStore.Controllers
         {
             
             //power by Dynamic Linq Query
-            var authors = db.Authors.OrderBy(queryOptions.Sort);
+            //var authors = db.Authors.OrderBy(queryOptions.Sort);
 
-            
+            var start = (queryOptions.CurrentPage - 1) * queryOptions.PageSize;
+
+            var authors = db.Authors.
+                            OrderBy(queryOptions.Sort).
+                            Skip(start).
+                            Take(queryOptions.PageSize);
+
+            queryOptions.TotalPages = (int)Math.Ceiling((double)db.Authors.Count() / queryOptions.PageSize);
+
             ViewBag.QueryOptions = queryOptions;
             return View(authors.ToList());
         }
@@ -50,13 +58,14 @@ namespace BookStore.Controllers
             {
                 return HttpNotFound();
             }
-            return View(author);
+            return View("Form", author);
         }
 
         // GET: /Authors/Create
         public ActionResult Create()
         {
-            return View();
+            //return View();
+            return View("Form", new Author());
         }
 
         // POST: /Authors/Create
@@ -73,7 +82,7 @@ namespace BookStore.Controllers
                 return RedirectToAction("Index");
             }
 
-            return View(author);
+            return View("Form", author);
         }
 
         // GET: /Authors/Edit/5
@@ -88,7 +97,7 @@ namespace BookStore.Controllers
             {
                 return HttpNotFound();
             }
-            return View(author);
+            return View("Form", author);
         }
 
         // POST: /Authors/Edit/5
@@ -104,7 +113,7 @@ namespace BookStore.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View(author);
+            return View("Form", author);
         }
 
         // GET: /Authors/Delete/5
