@@ -10,11 +10,13 @@ using System.Web.Mvc;
 using BookStore.Models;
 using BookStore.DAL;
 using System.Web.ModelBinding;
+using BookStore.ViewModels;
 
 namespace BookStore.Controllers
 {
     public class AuthorsController : Controller
     {
+
         private BookContext db = new BookContext();
 
         /*
@@ -41,8 +43,22 @@ namespace BookStore.Controllers
 
             queryOptions.TotalPages = (int)Math.Ceiling((double)db.Authors.Count() / queryOptions.PageSize);
 
-            ViewBag.QueryOptions = queryOptions;
-            return View(authors.ToList());
+            //ViewBag.QueryOptions = queryOptions;
+
+            AutoMapper.Mapper.CreateMap<Author, AuthorViewModel>();
+
+
+            //return View(authors.ToList());
+            //return View(AutoMapper.Mapper.Map<List<Author>, List<AuthorViewModel>>(authors.ToList()));
+            return View(new ResultList<AuthorViewModel>
+            {
+                QueryOptions = queryOptions,
+                Results = AutoMapper.Mapper.Map<List<Author>, List<AuthorViewModel>>(authors.ToList())
+            }
+            );
+             
+
+            
         }
 
 
@@ -97,7 +113,7 @@ namespace BookStore.Controllers
             {
                 return HttpNotFound();
             }
-            return View("Form", author);
+            return View("FormEdit", author);
         }
 
         // POST: /Authors/Edit/5
@@ -113,7 +129,7 @@ namespace BookStore.Controllers
                 db.SaveChanges();
                 return RedirectToAction("Index");
             }
-            return View("Form", author);
+            return View("FormEdit", author);
         }
 
         // GET: /Authors/Delete/5

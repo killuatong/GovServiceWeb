@@ -10,7 +10,7 @@
     <h2>@ViewBag.Title</h2>
 
 
-    @using (Html.BeginForm("Create", "Authors", FormMethod.Post, new { data_bind = "submit: validateAndSave" }))
+    @using (Html.BeginForm("Edit", "Authors", FormMethod.Post, new { data_bind = "submit: validateAndSave" }))
     {
         @Html.AntiForgeryToken()
 

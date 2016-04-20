@@ -1,9 +1,9 @@
-﻿@model IEnumerable<BookStore.Models.Author>
-@using BookStore.Models;
+﻿@using BookStore.ViewModels
+@model ResultList<AuthorViewModel>
 
 @{
-    ViewBag.Title = "Index";
-    var queryOptions = (QueryOptions)ViewBag.QueryOptions;
+    ViewBag.Title = "AuthorsIndexApi";
+    var queryOptions = Model.QueryOptions;
 }
 
 <h2>Index</h2>
@@ -11,80 +11,57 @@
 <p>
     @Html.ActionLink("Create New", "Create")
 </p>
-<table class="table">
-    <tr>
-        <th>
-            @Html.DisplayNameFor(model => model.FirstName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.LastName)
-        </th>
-        <th>
-            @Html.DisplayNameFor(model => model.Biography)
-        </th>
-        <th></th>
-    </tr>
-
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.FirstName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.LastName)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.Biography)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id=item.Id }) |
-            @Html.ActionLink("Details", "Details", new { id=item.Id }) |
-            @Html.ActionLink("Delete", "Delete", new { id=item.Id })
-        </td>
-    </tr>
-}
-
-</table>
 
 
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.BuildSortableLink("First Name", "Index", "FirstName", queryOptions)
-            </th>
-            <th>
-                @Html.BuildSortableLink("Last Name", "Index", "LastName", queryOptions)
-            </th>
-            <th>
-                Actions
-            </th>
-        </tr>
-    </thead>
-    <tbody data-bind="foreach: authors">
-        <tr>
-            <td data-bind="text: firstName"></td>
-            <td data-bind="text: lastName"></td>
-            <td>
-                <a data-bind="attr: {href: '@Url.Action("Details")/' + id }" class="btn btn-info">Details</a>
-                <a data-bind="attr: {href: '@Url.Action("Edit")/' + id }" class="btn btn-primary">Edit</a>
-                <a data-bind="attr: {href: '@Url.Action("Delete")/' + id }" class="btn btn-danger">Delete</a>
+<div style="display: none" data-bind="visible: pagingService.entities().length > 0">
+    <table class="table table-bordered table-striped">
+        <thead>
+            <tr>
+                <th>
+                    @Html.BuildKnockoutSortableLink("First Name", "Index", "firstName")
+                </th>
+                <th>
+                    @Html.BuildKnockoutSortableLink("Last Name", "Index", "lastName")
+                </th>
+                <th>
+                    Actions
+                </th>
+            </tr>
+        </thead>
+        <tbody data-bind="foreach: pagingService.entities">
+            <tr>
+                <td data-bind="text: firstName"></td>
+                <td data-bind="text: lastName"></td>
+                <td>
+                    <a data-bind="attr: {href: '@Url.Action("Details")/' + id }" class="btn btn-info">Details</a>
+                    <a data-bind="attr: {href: '@Url.Action("Edit")/' + id }" class="btn btn-primary">Edit</a>
 
-            </td>
-        </tr>
-        
-    </tbody>
+                    <a data-bind="click : $parent.showDeleteModal, attr: { href : '@Url.Action("Delete")/' + id }"
+                       class="btn btn-danger">Delete</a>
+                </td>
+            </tr>
 
-</table>
-@Html.BuildNextPreviousLinks(queryOptions, "Index")
+        </tbody>
+
+    </table>
+    @Html.BuildKnockoutNextPreviousLinks("Index")
+</div>
+
+
+<div style="display: none" data-bind="visible: pagingService.entities().length == 0"
+     class="alert alert-warning alert-dismissible" role="alert">
+    <button type="button" class="close" data-dismiss="alert">
+        <span aria-hidden="true">&times;</span>
+        <span class="sr-only">Close</span>
+    </button>
+    There are no authors to display.
+    Click @Html.ActionLink("here", "Create") to create one now.
+</div>
 
 @section Scripts {
+    @Scripts.Render("/Scripts/ViewModels/AuthorIndexViewModel.js","/Scripts/Services/PagingService.js")
     <script>
-        function ViewModel(authors) {
-        var self = this;
-        self.authors = authors;
-        };
-        var viewModel = new ViewModel(@Html.HtmlConvertToJson(Model));
+        var viewModel = new AuthorIndexViewModel(@Html.HtmlConvertToJson(Model));
         ko.applyBindings(viewModel);
     </script>
 }
